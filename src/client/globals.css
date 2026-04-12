@@ -1,0 +1,312 @@
+@import "tailwindcss";
+@import "highlight.js/styles/github-dark.css";
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap");
+
+:root {
+  /* Core surface palette — soft pastel gradient world */
+  --background: #faf7f3;
+  --background-tint: #f4e9e0;
+  --foreground: #15131a;
+  --card: #ffffff;
+  --card-foreground: #15131a;
+  --popover: #ffffff;
+  --popover-foreground: #15131a;
+
+  /* Brand accents from the palette */
+  --teal: #85b9c9;
+  --teal-soft: #d4ebf2;
+  --peach: #f4b183;
+  --peach-soft: #fde5d0;
+  --lavender: #c4a7e7;
+  --lavender-soft: #ece2f7;
+
+  /* Semantic slots built on the accents */
+  --primary: #15131a;
+  --primary-foreground: #faf7f2;
+  --secondary: #f1ede6;
+  --secondary-foreground: #15131a;
+  --muted: #f1ede6;
+  --muted-foreground: #6b6673;
+  --accent: #ece2f7;
+  --accent-foreground: #15131a;
+  --border: rgba(21, 19, 26, 0.08);
+  --ring: rgba(132, 185, 201, 0.45);
+
+  --font-sans:
+    "Urbanist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display:
+    "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-mono:
+    "SF Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-reading:
+    "Inter", "Urbanist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+* {
+  border-color: var(--border);
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a,
+[role="button"] {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+html {
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--background);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "ss02";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005em;
+  /* `clip` prevents horizontal overflow without creating a new scroll
+     container — critical on iOS, where `overflow-x: hidden` on html/body
+     breaks touch-swipe vertical scrolling. */
+  overflow-x: clip;
+  /* Respect iOS safe areas when installed as a PWA */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Prevent text selection on UI chrome (headers, pills, buttons) */
+header,
+button,
+[role="button"] {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow selection in prose content */
+.prose-wiki,
+.prose-wiki * {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* Safe-area helper utilities */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.mt-safe { margin-top: env(safe-area-inset-top); }
+.mb-safe { margin-bottom: env(safe-area-inset-bottom); }
+
+/* iOS smooth momentum scrolling on scrollable containers */
+.scroll-smooth-touch {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbars everywhere for a native-app feel — scroll still works,
+   iOS already shows a subtle overlay indicator briefly while scrolling. */
+html {
+  scrollbar-width: none; /* Firefox */
+}
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 300;
+}
+
+.prose-wiki {
+  color: var(--foreground);
+  font-family: var(--font-reading);
+  font-size: 15px;
+  letter-spacing: -0.011em;
+}
+
+.prose-wiki a {
+  color: #4a6b8f;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(132, 185, 201, 0.6);
+  text-decoration-thickness: 1.5px;
+  transition: text-decoration-color 150ms var(--ease-out);
+}
+
+.prose-wiki a:hover {
+  text-decoration-color: var(--teal);
+}
+
+.prose-wiki h1,
+.prose-wiki h2,
+.prose-wiki h3,
+.prose-wiki h4 {
+  color: var(--foreground);
+  font-family: var(--font-display);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+
+.prose-wiki h2 {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose-wiki pre {
+  overflow-x: auto;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: #1a1825;
+  padding: 1.25rem;
+  box-shadow: 0 8px 24px -12px rgba(21, 19, 26, 0.25);
+}
+
+.prose-wiki code:not(pre code) {
+  border-radius: 0.4rem;
+  background: var(--lavender-soft);
+  color: #5b4a7a;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.prose-wiki blockquote {
+  border-left: 3px solid var(--teal);
+  padding-left: 1rem;
+  color: var(--muted-foreground);
+  background: linear-gradient(90deg, var(--teal-soft), transparent);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Glass surface for cards — subtle tint with backdrop blur */
+.surface {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(1.1);
+  -webkit-backdrop-filter: blur(20px) saturate(1.1);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 8px 24px -12px rgba(21, 19, 26, 0.12);
+}
+
+.surface-raised {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 12px 40px -16px rgba(21, 19, 26, 0.18),
+    0 4px 12px -6px rgba(196, 167, 231, 0.2);
+}
+
+/* Accent chip variants */
+.chip-teal {
+  background: var(--teal-soft);
+  color: #3e6978;
+  border: 1px solid rgba(133, 185, 201, 0.4);
+}
+.chip-peach {
+  background: var(--peach-soft);
+  color: #9a5a2f;
+  border: 1px solid rgba(244, 177, 131, 0.4);
+}
+.chip-lavender {
+  background: var(--lavender-soft);
+  color: #5b4a7a;
+  border: 1px solid rgba(196, 167, 231, 0.4);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeInUp 500ms var(--ease-out) both;
+}
+
+.stagger-1 { animation-delay: 0ms; }
+.stagger-2 { animation-delay: 60ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 180ms; }
+.stagger-5 { animation-delay: 240ms; }
+.stagger-6 { animation-delay: 300ms; }
+.stagger-7 { animation-delay: 360ms; }
+.stagger-8 { animation-delay: 420ms; }
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 20px 40px -20px rgba(21, 19, 26, 0.2),
+      0 6px 16px -8px rgba(196, 167, 231, 0.25);
+  }
+}
+
+.hover-lift {
+  transition: transform 250ms var(--ease-out), box-shadow 250ms var(--ease-out);
+}
+
+/* Focus ring using teal — inherits element's own border-radius */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Table of Contents */
+.toc {
+  border-left: 1px solid var(--border);
+  padding-left: 1rem;
+}
+
+.toc-item {
+  position: relative;
+}
+
+.toc-item::before {
+  content: "";
+  position: absolute;
+  left: calc(-1rem - 1px);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: transparent;
+  transition: background-color 200ms ease;
+}
+
+.toc-item[class*="font-medium"]::before {
+  background: var(--teal);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.15s !important;
+    transition-duration: 0.15s !important;
+  }
+
+  .animate-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -259,7 +259,7 @@ export function SearchBox({
           {!showResults && (
             <h1 className="font-display text-[clamp(3.25rem,14vw,8rem)] leading-[0.95] tracking-[-0.035em] text-[var(--foreground)]" style={{ fontWeight: 300 }}>
               {brandTitle.lead}
-              <span className="bg-gradient-to-r from-[var(--teal)] via-[var(--lavender)] to-[var(--peach)] bg-clip-text text-transparent" style={{ fontWeight: 500 }}>
+              <span className="bg-gradient-to-r from-[var(--teal)] via-[var(--lavender)] to-[var(--peach)] bg-clip-text text-transparent" style={{ fontWeight: 400 }}>
                 {brandTitle.accent ?? ""}
               </span>
             </h1>

@@ -87,7 +87,7 @@ export function HomepageContent({
   const columns = [orderedSections.slice(0, midpoint), orderedSections.slice(midpoint)];
 
   const sectionViews: Record<HomepageSectionKey, ReactNode> = {
-    featured: (
+    featured: homepage.featured.length > 0 ? (
       <div>
         <div className="mb-4 flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-[var(--peach)] shadow-[0_0_12px_var(--peach)]" />
@@ -95,42 +95,36 @@ export function HomepageContent({
             {labels.featured}
           </p>
         </div>
-        <Link
-          to={`/wiki/${homepage.featured.slug}`}
-          className="surface-raised hover-lift relative block w-full overflow-hidden rounded-3xl p-5 text-left sm:p-7"
-        >
-          <div
-            aria-hidden
-            className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[var(--peach)] opacity-30 blur-3xl"
-          />
-          <div
-            aria-hidden
-            className="absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-[var(--lavender)] opacity-25 blur-3xl"
-          />
-          <div className="relative">
-            <span className="chip-peach mb-4 inline-block rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider">
-              {labels.spotlightBadge}
-            </span>
-            <h3 className="font-display text-[1.55rem] leading-tight tracking-tight text-[var(--foreground)] sm:text-[1.75rem]">
-              {homepage.featured.title}
-            </h3>
-            <p className="mt-3 line-clamp-3 text-[0.95rem] leading-relaxed text-[var(--muted-foreground)]">
-              {homepage.featured.summary}
-            </p>
-            <div className="mt-5 flex items-center gap-3 text-xs font-medium text-[var(--muted-foreground)]">
-              <span className="flex items-center gap-1.5">
-                <span className="h-1 w-1 rounded-full bg-[var(--teal)]" />
-                {homepage.featured.wordCount.toLocaleString()} words
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-1 w-1 rounded-full bg-[var(--lavender)]" />
-                {homepage.featured.backlinkCount} backlinks
-              </span>
-            </div>
-          </div>
-        </Link>
+        <div className="grid grid-cols-2 gap-2.5">
+          {homepage.featured.map((page, index) => {
+            const accentRail = [
+              "before:bg-[var(--teal)]",
+              "before:bg-[var(--peach)]",
+              "before:bg-[var(--lavender)]",
+            ][index % 3];
+            return (
+              <Link
+                key={page.file}
+                to={`/wiki/${page.slug}`}
+                className={`surface hover-lift relative overflow-hidden rounded-2xl px-4 py-3.5 text-left before:absolute before:left-0 before:top-0 before:h-full before:w-1 ${accentRail}`}
+              >
+                <p className="truncate pl-1 font-display text-[0.95rem] text-[var(--foreground)]">
+                  {page.title}
+                </p>
+                <p className="mt-1 line-clamp-2 pl-1 text-[0.78rem] leading-relaxed text-[var(--muted-foreground)]">
+                  {page.summary}
+                </p>
+                <div className="mt-2 flex items-center gap-2 pl-1 text-[0.65rem] font-medium text-[var(--muted-foreground)]">
+                  <span>{page.wordCount.toLocaleString()} words</span>
+                  <span>·</span>
+                  <span>{page.backlinkCount} backlinks</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
-    ),
+    ) : null,
     topConnected: (
       <div>
         <div className="mb-4 flex items-center gap-2">

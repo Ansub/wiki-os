@@ -69,7 +69,7 @@ export interface CategoryInfo {
 export interface HomepageData {
   totalPages: number;
   totalWords: number;
-  featured: PageSummary;
+  featured: PageSummary[];
   recentPages: PageSummary[];
   categories: CategoryInfo[];
   topConnected: PageSummary[];

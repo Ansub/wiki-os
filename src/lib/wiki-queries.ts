@@ -196,6 +196,16 @@ async function prepareRead(deps: WikiQueryDependencies) {
   await deps.drainPendingUpdates();
 }
 
+function pickRandom<T>(items: T[], count: number): T[] {
+  if (items.length <= count) return [...items];
+  const shuffled = [...items];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, count);
+}
+
 export async function getDerivedData(deps: WikiQueryDependencies): Promise<DerivedData> {
   await prepareRead(deps);
 
@@ -336,7 +346,7 @@ export async function getDerivedData(deps: WikiQueryDependencies): Promise<Deriv
     homepage: {
       totalPages: totals.totalPages,
       totalWords: totals.totalWords,
-      featured: topConnected[0] ?? recentPages[0] ?? pageSummaries[0] ?? emptySummary,
+      featured: pickRandom(pageSummaries, 4),
       recentPages,
       categories,
       topConnected,

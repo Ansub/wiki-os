@@ -1,0 +1,5 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "michelemelluso.code-beautifier",
+    "files.autoSave": "onFocusChange"
+}

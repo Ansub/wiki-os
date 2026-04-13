@@ -12,11 +12,11 @@ import { RouteErrorBoundary } from "../route-error-boundary";
 
 /* ── Colors ── */
 
-const DEFAULT_NODE_COLOR = "#c4c0cc";
-const EDGE_DEFAULT = "#ece5d2";
-const EDGE_HOVER = "rgba(132, 185, 201, 0.85)";
-const LABEL_COLOR = "#6b6673";
-const BG_COLOR = "#faf7f3";
+const DEFAULT_NODE_COLOR = "#c8c4d0";
+const EDGE_DEFAULT = "#e8ebe9";
+const EDGE_HOVER = "rgba(47, 127, 146, 0.82)";
+const LABEL_COLOR = "#4a4752";
+const BG_COLOR = "#f5f9f7";
 
 function getCategoryColor(
   categories: string[],

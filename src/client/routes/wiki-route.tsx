@@ -612,7 +612,7 @@ export function Component() {
 
         {/* Mobile TOC */}
         {filteredHeadings.length > 0 && (
-          <div className="mb-6 lg:hidden rounded-lg border border-[var(--border)] bg-white px-4 py-3">
+          <div className="mb-6 lg:hidden rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3">
             <p className="mb-2 text-xs font-medium uppercase tracking-wider text-[var(--muted-foreground)]">
               On this page
             </p>
@@ -657,7 +657,7 @@ export function Component() {
                   <Link
                     key={link.href}
                     to={link.href}
-                    className="rounded-full border border-[var(--border)] bg-white px-3.5 py-1.5 text-sm transition-[color,background-color,transform] duration-150 hover:bg-[var(--secondary)] active:scale-[0.97]"
+                    className="rounded-full border border-[var(--border)] bg-[var(--card)] px-3.5 py-1.5 text-sm transition-[color,background-color,transform] duration-150 hover:bg-[var(--secondary)] active:scale-[0.97]"
                   >
                     <span className="font-display font-light text-[var(--foreground)]">
                       {link.label}

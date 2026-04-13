@@ -13,9 +13,9 @@ const categoryAccents = [
 ];
 
 const personAvatarAccents = [
-  "bg-[var(--teal-soft)] text-[#3e6978]",
-  "bg-[var(--peach-soft)] text-[#9a5a2f]",
-  "bg-[var(--lavender-soft)] text-[#5b4a7a]",
+  "bg-[var(--teal-soft)] text-[#1a4a56]",
+  "bg-[var(--peach-soft)] text-[#6b3d1f]",
+  "bg-[var(--lavender-soft)] text-[#3d2f5c]",
 ];
 
 function PersonCard({ person, index }: { person: PageSummary; index: number }) {

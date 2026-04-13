@@ -1,5 +1,30 @@
 {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "michelemelluso.code-beautifier",
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "chat.mcp.discovery.enabled": {
+        "claude-desktop": true,
+        "windsurf": true,
+        "cursor-global": true,
+        "cursor-workspace": true
+    },
+    "chat.mcp.gallery.enabled": true,
+    "chat.mcp.assisted.nuget.enabled": true,
+    "testing.alwaysRevealTestOnStateChange": true,
+    "scm.alwaysShowActions": true,
+    "color2tailwind.classPrefix": "tw-",
+    "obsidian-snippets.path": "/Users/supamacos/Development/",
+    "css.autoValidation": "Save",
+    "tailwindConfigViewer.workspacePath": "/Users/supamacos/Development/",
+    "tailwindcss-intellisense.trace.server": "verbose",
+    "tailwindCSS.emmetCompletions": true,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "liveServer.settings.cors": true,
+    "liveServer.settings.CustomBrowser": "chrome",
+    "liveServer.settings.fullReload": true
 }

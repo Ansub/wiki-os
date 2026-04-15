@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { appendFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -13,6 +13,8 @@ const restartCommand = process.env.WIKIOS_RESTART_COMMAND ?? "";
 const stateDir = path.resolve(process.env.XDG_STATE_HOME ?? path.join(process.env.USERPROFILE ?? process.env.HOME ?? repoRoot, ".local", "state"), "wiki-os");
 const logDir = path.join(stateDir, "logs");
 const deployLog = path.join(logDir, "deploy.log");
+const MAX_CAPTURED_LINES = 400;
+const HEALTH_REQUEST_TIMEOUT_MS = 2_000;
 
 function timestamp() {
   return new Date().toLocaleTimeString("en-GB", { hour12: false });
@@ -52,9 +54,19 @@ function run(command, args, options = {}) {
       stdio: ["ignore", "pipe", "pipe"],
     });
 
-    let output = "";
+    const capturedLines = [];
+    let pending = "";
+
     const collect = (chunk) => {
-      output += chunk.toString();
+      pending += chunk.toString();
+      const lines = pending.split(/\r?\n/);
+      pending = lines.pop() ?? "";
+      if (lines.length > 0) {
+        capturedLines.push(...lines);
+        if (capturedLines.length > MAX_CAPTURED_LINES) {
+          capturedLines.splice(0, capturedLines.length - MAX_CAPTURED_LINES);
+        }
+      }
     };
 
     child.stdout?.on("data", collect);
@@ -62,6 +74,12 @@ function run(command, args, options = {}) {
 
     child.on("error", reject);
     child.on("exit", (code) => {
+      if (pending) {
+        capturedLines.push(pending);
+      }
+
+      const output = capturedLines.join("\n");
+
       if (code === 0) {
         resolve(output);
         return;
@@ -79,14 +97,19 @@ async function runNpm(args, options = {}) {
 
 async function waitForHealth() {
   for (let attempt = 1; attempt <= 20; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), HEALTH_REQUEST_TIMEOUT_MS);
+
     try {
-      const response = await fetch(`${baseUrl}/api/health`);
+      const response = await fetch(`${baseUrl}/api/health`, { signal: controller.signal });
       if (response.ok) {
         await log(`Health endpoint is up (took ${attempt}s)`);
         return;
       }
     } catch {
       // Keep retrying until timeout.
+    } finally {
+      clearTimeout(timeout);
     }
 
     if (attempt === 20) {

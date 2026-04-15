@@ -1,14 +1,22 @@
 #!/usr/bin/env node
 
 const base = process.env.WIKIOS_BASE_URL ?? "http://localhost:5211";
+const REQUEST_TIMEOUT_MS = 10_000;
 let pass = 0;
 let fail = 0;
 const errors = [];
 
 async function request(url) {
-  const response = await fetch(url);
-  const bodyText = await response.text();
-  return { response, bodyText };
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    const bodyText = await response.text();
+    return { response, bodyText };
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function noteFailure(message) {

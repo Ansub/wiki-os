@@ -1,0 +1,13 @@
+.git
+.github
+.vscode
+node_modules
+dist
+dist-server
+.DS_Store
+coverage
+*.log
+*.sqlite
+*.tsbuildinfo
+.wiki-os
+docker-compose.override.yml

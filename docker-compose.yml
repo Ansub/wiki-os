@@ -1,0 +1,21 @@
+name: wiki-os
+
+services:
+  wiki-os:
+    container_name: wiki-os-app
+    build:
+      context: .
+    ports:
+      - "5211:5211"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 5211
+      HOME: /data
+      WIKI_ROOT: /vault
+      WIKIOS_OPEN_BROWSER: "0"
+    volumes:
+      - ./sample-vault:/vault:ro
+      - wiki-os-data:/data
+
+volumes:
+  wiki-os-data:

@@ -6,11 +6,15 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
-const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+const npmExecPath = process.env.npm_execpath;
+const nodeExecPath = process.env.npm_node_execpath ?? process.execPath;
 
 function runCommand(args, extraEnv = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(npmCommand, args, {
+    const command = npmExecPath ? nodeExecPath : (process.platform === "win32" ? "npm.cmd" : "npm");
+    const commandArgs = npmExecPath ? [npmExecPath, ...args] : args;
+
+    const child = spawn(command, commandArgs, {
       cwd: repoRoot,
       env: { ...process.env, ...extraEnv },
       stdio: "inherit",
@@ -23,7 +27,7 @@ function runCommand(args, extraEnv = {}) {
         return;
       }
 
-      reject(new Error(`${npmCommand} ${args.join(" ")} exited with code ${code ?? 1}`));
+      reject(new Error(`${command} ${commandArgs.join(" ")} exited with code ${code ?? 1}`));
     });
   });
 }

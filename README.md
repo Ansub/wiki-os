@@ -24,25 +24,6 @@ git clone https://github.com/Ansub/wiki-os.git wiki-os && cd wiki-os && npm run 
 
 WikiOS will open in your browser and guide you through choosing a vault. You can also use the bundled demo vault on first run.
 
-WikiOS setup and maintenance commands now run through Node-based helpers, so the same commands work on Windows, macOS, and Linux.
-
-### Docker
-
-Run the bundled demo vault in Docker:
-
-```bash
-docker compose up --build
-```
-
-The container uses the sample vault from `sample-vault/` by default. To point it at your own vault, change the `/vault` volume mount and the `WIKI_ROOT` environment variable in `docker-compose.yml`.
-
-For a direct build and run:
-
-```bash
-docker build -t wiki-os .
-docker run --rm -p 5211:5211 -e WIKI_ROOT=/vault -v /path/to/your/vault:/vault:ro -v wiki-os-data:/data wiki-os
-```
-
 ## Features
 
 - Homepage with featured notes, recent notes, and people highlights
@@ -53,6 +34,46 @@ docker run --rm -p 5211:5211 -e WIKI_ROOT=/vault -v /path/to/your/vault:/vault:r
 - Manual reindex support
 - Automatic file watching
 - Local-first setup with no cloud requirement
+
+### Docker
+
+You can run WikiOS with Docker if you want a simple container setup.
+
+This starts WikiOS with the bundled demo vault:
+
+```bash
+docker compose up --build
+```
+
+The `docker-compose.yml` file is in the main project folder.
+
+By default, Docker uses the demo notes in `sample-vault/`.
+
+If you want to use your own Obsidian vault instead:
+
+1. Open `docker-compose.yml`
+2. Find this line:
+
+```yml
+- ./sample-vault:/vault:ro
+```
+
+3. Replace `./sample-vault` with the path to your own vault
+
+Example:
+
+```yml
+- /Users/your-name/Documents/MyVault:/vault:ro
+```
+
+Leave `WIKI_ROOT: /vault` as it is.
+
+For a direct build and run:
+
+```bash
+docker build -t wiki-os .
+docker run --rm -p 5211:5211 -e WIKI_ROOT=/vault -v /path/to/your/vault:/vault:ro -v wiki-os-data:/data wiki-os
+```
 
 ## Contributor mode
 

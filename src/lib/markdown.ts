@@ -133,7 +133,12 @@ export function stripLeadingMarkdownTitle(markdown: string) {
 }
 
 export function createHeadingId(text: string) {
-  return text.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/_/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
 }
 
 export function extractMarkdownHeadings(markdown: string): WikiHeading[] {

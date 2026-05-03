@@ -15,17 +15,56 @@ import { useWikiConfig } from "@/client/wiki-config";
 import { getTopicColor, type TopicAliasConfig } from "@/lib/wiki-config";
 import type { WikiHeading, WikiNeighbor, WikiPageData } from "@/lib/wiki-shared";
 import { usePersonImage } from "@/client/use-person-image";
+import { createHeadingId } from "@/lib/markdown";
 
 import { fetchJson, isSetupRequiredResponse } from "../api";
 import { RouteErrorBoundary } from "../route-error-boundary";
 
 const remarkPlugins = [remarkGfm];
 const rehypePlugins = [rehypeHighlight];
+
+/** Extracts plain text from React children to use for ID generation */
+function getTextContent(children: React.ReactNode): string {
+  if (typeof children === "string") return children;
+  if (Array.isArray(children)) return children.map(getTextContent).join("");
+  // @ts-ignore - children might be a ReactElement with props
+  if (children?.props?.children) return getTextContent(children.props.children);
+  return "";
+}
+
 const markdownComponents = {
-  h1: ({ ...props }) => <h1 className="mb-4 text-3xl scroll-mt-20" {...props} />,
-  h2: ({ ...props }) => <h2 className="font-display mb-3 mt-10 text-xl font-light scroll-mt-20" {...props} />,
-  h3: ({ ...props }) => <h3 className="font-display mb-2 mt-7 text-lg font-light scroll-mt-20" {...props} />,
-  h4: ({ ...props }) => <h4 className="mb-2 mt-5 text-base font-medium scroll-mt-20" {...props} />,
+  h1: ({ children, ...props }: any) => {
+    const id = createHeadingId(getTextContent(children));
+    return (
+      <h1 id={id} className="mb-4 text-3xl scroll-mt-20" {...props}>
+        {children}
+      </h1>
+    );
+  },
+  h2: ({ children, ...props }: any) => {
+    const id = createHeadingId(getTextContent(children));
+    return (
+      <h2 id={id} className="font-display mb-3 mt-10 text-xl font-light scroll-mt-20" {...props}>
+        {children}
+      </h2>
+    );
+  },
+  h3: ({ children, ...props }: any) => {
+    const id = createHeadingId(getTextContent(children));
+    return (
+      <h3 id={id} className="font-display mb-2 mt-7 text-lg font-light scroll-mt-20" {...props}>
+        {children}
+      </h3>
+    );
+  },
+  h4: ({ children, ...props }: any) => {
+    const id = createHeadingId(getTextContent(children));
+    return (
+      <h4 id={id} className="mb-2 mt-5 text-base font-medium scroll-mt-20" {...props}>
+        {children}
+      </h4>
+    );
+  },
   p: ({ ...props }) => <p className="mb-4 leading-[1.8]" {...props} />,
   ul: ({ ...props }) => <ul className="mb-4 list-disc pl-6 leading-[1.8]" {...props} />,
   ol: ({ ...props }) => <ol className="mb-4 list-decimal pl-6 leading-[1.8]" {...props} />,
@@ -669,7 +708,7 @@ export function Component() {
           )}
 
           {/* Desktop sidebar — TOC + mini graph */}
-          <aside className="hidden xl:block absolute -right-60 top-0 w-52">
+          <aside className="hidden xl:block absolute -right-60 top-0 bottom-0 w-52">
             <div className="sticky top-8">
               {filteredHeadings.length > 0 && (
                 <TableOfContents headings={filteredHeadings} activeId={activeId} />

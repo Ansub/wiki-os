@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { prepareWikiMarkdown, transformObsidianLinks } from "../src/lib/markdown";
+import { prepareWikiMarkdown, transformWikiLinks } from "../src/lib/markdown";
 import { decodeSlugParts, slugFromFileName, titleFromFileName } from "../src/lib/wiki";
 
 describe("wiki helpers", () => {
@@ -13,11 +13,11 @@ describe("wiki helpers", () => {
     expect(titleFromFileName("slides/The Algorithm - Slides.md")).toBe("The Algorithm - Slides");
   });
 
-  it("converts obsidian wikilinks into internal markdown links", () => {
-    expect(transformObsidianLinks("See [[LLMs]] and [[Andrej Karpathy|Karpathy]].")).toBe(
+  it("converts obsidian wikilinks and markdown links into wiki links", () => {
+    expect(transformWikiLinks("See [[LLMs]] and [[Andrej Karpathy|Karpathy]].")).toBe(
       "See [LLMs](/wiki/LLMs) and [Karpathy](/wiki/Andrej%20Karpathy).",
     );
-    expect(transformObsidianLinks("Deck: [[slides/The Algorithm - Slides]].")).toBe(
+    expect(transformWikiLinks("Deck: [[slides/The Algorithm - Slides]].")).toBe(
       "Deck: [slides/The Algorithm - Slides](/wiki/slides/The%20Algorithm%20-%20Slides).",
     );
   });

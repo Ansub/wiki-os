@@ -77,7 +77,7 @@ export interface WikiIndexerPageDependencies<TConfig = unknown>
     frontmatter: Record<string, unknown>,
     config: TConfig,
   ) => boolean;
-  extractBacklinkReferences: (markdown: string) => BacklinkReference[];
+  extractBacklinkReferences: (markdown: string, sourceFile?: string) => BacklinkReference[];
   extractSummary: (markdown: string) => string;
 }
 
@@ -218,7 +218,7 @@ export async function loadIndexedWikiPage<TConfig>(
       contentMarkdown: prepared.contentMarkdown,
       contentLower: prepared.contentMarkdown.toLowerCase(),
       wordCount: prepared.contentMarkdown.split(/\s+/).filter(Boolean).length,
-      backlinkReferences: deps.extractBacklinkReferences(body),
+      backlinkReferences: deps.extractBacklinkReferences(body, file),
       categoryNames,
       hasCodeBlocks: prepared.hasCodeBlocks,
       headings: prepared.headings,

@@ -6,6 +6,7 @@ import {
 } from "./wiki-config";
 import { normalizeRelativePath } from "./wiki-file-utils";
 import {
+  hrefToSlug,
   slugFromFileName,
   type PersonOverrideValue,
   type SearchMatch,
@@ -472,12 +473,17 @@ export function countTermOccurrences(content: string, term: string) {
   }
 }
 
-export function extractBacklinkReferences(markdown: string): BacklinkReference[] {
+export function extractBacklinkReferences(
+  markdown: string,
+  sourceFile?: string,
+): BacklinkReference[] {
   const references: BacklinkReference[] = [];
-  const linkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
+
+  // Extract [[wikilinks]]
+  const wikiLinkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
   let match: RegExpExecArray | null;
 
-  while ((match = linkRegex.exec(markdown)) !== null) {
+  while ((match = wikiLinkRegex.exec(markdown)) !== null) {
     const rawTarget = match[1].trim().replace(/^sources\//, "");
     if (!rawTarget) {
       continue;
@@ -488,6 +494,21 @@ export function extractBacklinkReferences(markdown: string): BacklinkReference[]
       targetRaw: rawTarget,
       targetSlug: slugFromFileName(targetFile),
     });
+  }
+
+  // Extract [markdown links](href)
+  const mdLinkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
+  while ((match = mdLinkRegex.exec(markdown)) !== null) {
+    const href = match[2].trim();
+    const slug = hrefToSlug(href, sourceFile);
+    if (!slug) {
+      continue;
+    }
+
+    // Normalize the href for targetRaw: strip leading / and .md
+    // For relative links, use the resolved slug path (decoded)
+    const targetRaw = slug.split("/").map((s) => decodeURIComponent(s)).join("/");
+    references.push({ targetRaw, targetSlug: slug });
   }
 
   return references;

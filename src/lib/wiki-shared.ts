@@ -112,6 +112,28 @@ export function slugFromFileName(fileName: string) {
   return slugPartsFromFileName(fileName).join("/");
 }
 
+// Shared regex for Obsidian [[wikilinks]] (bracket-referenced links)
+export const WIKILINK_REGEX = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
+
+// Shared regex for standard [markdown links](href)
+export const MD_LINK_REGEX = /\[([^\]]*)\]\(([^)]+)\)/g;
+
+/**
+ * Convert a wikilink target string to its wiki slug.
+ * Handles both "target" and "target.md" forms.
+ */
+export function wikilinkTargetToSlug(target: string): string {
+  const withExt = target.endsWith(".md") ? target : `${target}.md`;
+  return slugFromFileName(withExt);
+}
+
+/**
+ * Build a /wiki/{slug} route from a wikilink target string.
+ */
+export function wikilinkHref(target: string): string {
+  return `/wiki/${wikilinkTargetToSlug(target)}`;
+}
+
 export function titleFromFileName(fileName: string) {
   const withoutExtension = fileName.replace(/\.md$/i, "");
   const parts = withoutExtension.split("/");

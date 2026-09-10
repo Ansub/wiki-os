@@ -7,7 +7,9 @@ import {
 import { normalizeRelativePath } from "./wiki-file-utils";
 import {
   hrefToSlug,
-  slugFromFileName,
+  wikilinkTargetToSlug,
+  WIKILINK_REGEX,
+  MD_LINK_REGEX,
   type PersonOverrideValue,
   type SearchMatch,
 } from "./wiki-shared";
@@ -485,19 +487,17 @@ export function extractBacklinkReferences(
 
 function extractWikiLinks(markdown: string): BacklinkReference[] {
   const references: BacklinkReference[] = [];
-  const linkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
   let match: RegExpExecArray | null;
 
-  while ((match = linkRegex.exec(markdown)) !== null) {
+  while ((match = WIKILINK_REGEX.exec(markdown)) !== null) {
     const rawTarget = match[1].trim().replace(/^sources\//, "");
     if (!rawTarget) {
       continue;
     }
 
-    const targetFile = rawTarget.endsWith(".md") ? rawTarget : `${rawTarget}.md`;
     references.push({
       targetRaw: rawTarget,
-      targetSlug: slugFromFileName(targetFile),
+      targetSlug: wikilinkTargetToSlug(rawTarget),
     });
   }
 
@@ -506,10 +506,9 @@ function extractWikiLinks(markdown: string): BacklinkReference[] {
 
 function extractMarkdownLinks(markdown: string, sourceFile?: string): BacklinkReference[] {
   const references: BacklinkReference[] = [];
-  const linkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
   let match: RegExpExecArray | null;
 
-  while ((match = linkRegex.exec(markdown)) !== null) {
+  while ((match = MD_LINK_REGEX.exec(markdown)) !== null) {
     const href = match[2].trim();
     const slug = hrefToSlug(href, sourceFile);
     if (!slug) {

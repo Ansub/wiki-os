@@ -1,15 +1,11 @@
-import { type WikiHeading, hrefToSlug, slugFromFileName } from "./wiki-shared";
-
-export function wikilinkHref(target: string) {
-  return `/wiki/${slugFromFileName(`${target}.md`)}`;
-}
+import { type WikiHeading, hrefToSlug, wikilinkHref, WIKILINK_REGEX, MD_LINK_REGEX } from "./wiki-shared";
 
 export function transformWikiLinks(markdown: string) {
   return convertStandardLinks(convertWikilinks(markdown));
 }
 
 function convertWikilinks(markdown: string): string {
-  return markdown.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (
+  return markdown.replace(WIKILINK_REGEX, (
     _: string,
     rawTarget: string,
     rawLabel?: string,
@@ -21,7 +17,7 @@ function convertWikilinks(markdown: string): string {
 }
 
 function convertStandardLinks(markdown: string): string {
-  return markdown.replace(/\[([^\]]*)\]\(([^)]+)\)/g, (
+  return markdown.replace(MD_LINK_REGEX, (
     fullMatch: string,
     label: string,
     href: string,

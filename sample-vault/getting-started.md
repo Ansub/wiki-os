@@ -17,3 +17,11 @@ tags:
 - Use article pages for long-form notes.
 - Use tags to shape the homepage.
 - Keep links between related notes.
+
+## Link syntaxes
+
+See how different link formats produce backlinks:
+
+- [OKF Compatibility](links/okf-compatibility.md) — relative markdown link
+- [Link Variants](links/link-variants.md) — bare path markdown link
+- [[links/external-references]] — wikilink to subdirectory

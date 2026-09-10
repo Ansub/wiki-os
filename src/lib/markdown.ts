@@ -1,14 +1,36 @@
-import { type WikiHeading, slugFromFileName } from "./wiki-shared";
+import { type WikiHeading, hrefToSlug, wikilinkHref, WIKILINK_REGEX, MD_LINK_REGEX } from "./wiki-shared";
 
-export function wikilinkHref(target: string) {
-  return `/wiki/${slugFromFileName(`${target}.md`)}`;
+export function transformWikiLinks(markdown: string) {
+  return convertStandardLinks(convertWikilinks(markdown));
 }
 
-export function transformObsidianLinks(markdown: string) {
-  return markdown.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, rawTarget: string, rawLabel?: string) => {
+function convertWikilinks(markdown: string): string {
+  return markdown.replace(WIKILINK_REGEX, (
+    _: string,
+    rawTarget: string,
+    rawLabel?: string,
+  ) => {
     const target = rawTarget.trim();
     const label = (rawLabel ?? rawTarget).trim();
     return `[${label}](${wikilinkHref(target)})`;
+  });
+}
+
+function convertStandardLinks(markdown: string): string {
+  return markdown.replace(MD_LINK_REGEX, (
+    fullMatch: string,
+    label: string,
+    href: string,
+  ) => {
+    const trimmedHref = href.trim();
+    // Already a wiki link — leave it
+    if (trimmedHref.startsWith("/wiki/")) return fullMatch;
+
+    const slug = hrefToSlug(trimmedHref);
+    // Not an internal link — leave it
+    if (!slug) return fullMatch;
+
+    return `[${label}](/wiki/${slug})`;
   });
 }
 
@@ -162,7 +184,7 @@ export function extractMarkdownHeadings(markdown: string): WikiHeading[] {
 
 export function prepareWikiMarkdown(markdown: string): PreparedWikiMarkdown {
   const { body } = parseWikiFrontmatter(markdown);
-  const contentMarkdown = stripLeadingMarkdownTitle(transformObsidianLinks(body));
+  const contentMarkdown = stripLeadingMarkdownTitle(transformWikiLinks(body));
 
   return {
     contentMarkdown,

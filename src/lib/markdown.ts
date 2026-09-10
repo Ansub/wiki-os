@@ -5,8 +5,11 @@ export function wikilinkHref(target: string) {
 }
 
 export function transformWikiLinks(markdown: string) {
-  // First, convert [[wikilinks]] to standard markdown links
-  let result = markdown.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (
+  return convertStandardLinks(convertWikilinks(markdown));
+}
+
+function convertWikilinks(markdown: string): string {
+  return markdown.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (
     _: string,
     rawTarget: string,
     rawLabel?: string,
@@ -15,11 +18,10 @@ export function transformWikiLinks(markdown: string) {
     const label = (rawLabel ?? rawTarget).trim();
     return `[${label}](${wikilinkHref(target)})`;
   });
+}
 
-  // Then, convert internal standard markdown links to /wiki/{slug}
-  // Skip links that already point to /wiki/ (from the wikilink pass above)
-  // Skip external URLs, fragment-only links, mailto:
-  result = result.replace(/\[([^\]]*)\]\(([^)]+)\)/g, (
+function convertStandardLinks(markdown: string): string {
+  return markdown.replace(/\[([^\]]*)\]\(([^)]+)\)/g, (
     fullMatch: string,
     label: string,
     href: string,
@@ -34,8 +36,6 @@ export function transformWikiLinks(markdown: string) {
 
     return `[${label}](/wiki/${slug})`;
   });
-
-  return result;
 }
 
 export interface PreparedWikiMarkdown {

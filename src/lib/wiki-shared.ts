@@ -135,38 +135,28 @@ export function resolveRelativePath(relative: string, sourceFile: string): strin
   return "/" + dir.join("/");
 }
 
+// Returns true for hrefs that produce no backlink: external, fragment-only
+function isNonInternalHref(href: string): boolean {
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(href)) return true;
+  if (href.startsWith("#")) return true;
+  return false;
+}
+
+// Strip fragment, resolve relative, ensure .md extension
+function normalizeHrefPath(href: string, sourceFile?: string): string {
+  let path = href;
+  const hashIndex = path.indexOf("#");
+  if (hashIndex >= 0) path = path.substring(0, hashIndex);
+  if (!path.startsWith("/") && sourceFile) path = resolveRelativePath(path, sourceFile);
+  return path.endsWith(".md") ? path : path + ".md";
+}
+
 /**
  * Convert a markdown link href to a wiki slug.
  * Returns null for external URLs and fragment-only links.
- *
- * Handles:
- *   - Absolute /path/to/file.md -> path/to/file
- *   - Relative ../path/to/file.md -> resolved against sourceFile
- *   - Fragment stripping: /path.md#section -> path
- *   - URI encoding each path segment
- *   - http://, https://, mailto: -> null
- *   - #fragment-only -> null
  */
 export function hrefToSlug(href: string, sourceFile?: string): string | null {
-  // External URLs have a protocol scheme (http://, https://, mailto:, etc.)
-  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(href)) return null;
-  // Fragment-only links
-  if (href.startsWith("#")) return null;
-
-  let path = href;
-
-  // Strip fragment
-  const hashIndex = path.indexOf("#");
-  if (hashIndex >= 0) path = path.substring(0, hashIndex);
-
-  // Resolve relative paths against source file
-  if (!path.startsWith("/") && sourceFile) {
-    path = resolveRelativePath(path, sourceFile);
-  }
-
-  // Ensure .md extension for proper slug conversion
-  const withExt = path.endsWith(".md") ? path : path + ".md";
-  // Strip leading slash before calling slugFromFileName
-  const clean = withExt.replace(/^\/+/g, "");
-  return slugFromFileName(clean);
+  if (isNonInternalHref(href)) return null;
+  const path = normalizeHrefPath(href, sourceFile);
+  return slugFromFileName(path.replace(/^\/+/g, ""));
 }
